@@ -71,11 +71,19 @@ jobs:
       # Tauri externalBin requires per-triple binaries. The host-arch default
       # in pkg-platform.mjs is not enough for macOS universal builds, which
       # need both x86_64 and aarch64 sidecars side by side.
-      - name: Package sidecar — macOS (both triples)
+      # tauri --target universal-apple-darwin expects a single fat binary
+      # named server-universal-apple-darwin (not the two arch-specific
+      # ones). We package both, then lipo them together.
+      - name: Package sidecar — macOS (both triples + universal lipo)
         if: matrix.platform == 'macos-latest'
         run: |
           yarn package:server x86_64-apple-darwin
           yarn package:server aarch64-apple-darwin
+          lipo -create \
+            -output src-tauri/bin/server-universal-apple-darwin \
+            src-tauri/bin/server-x86_64-apple-darwin \
+            src-tauri/bin/server-aarch64-apple-darwin
+          file src-tauri/bin/server-universal-apple-darwin
 
       - name: Package sidecar — Linux
         if: matrix.platform == 'ubuntu-22.04'
