@@ -1,0 +1,55 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "Illuminati Proxy Tester",
+  "version": "2.0.1",
+  "identifier": "com.illuminatinetworks.proxytester",
+  "build": {
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "yarn build:server && yarn package:server && yarn dev",
+    "beforeBuildCommand": "yarn build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Illuminati Proxy Tester",
+        "minWidth": 1200,
+        "minHeight": 600,
+        "resizable": true,
+        "fullscreen": false,
+        "devtools": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "mainBinaryName": "Illuminati.Proxy.Tester",
+  "bundle": {
+    "macOS": {
+      "entitlements": "./Entitlements.plist"
+    },
+    "createUpdaterArtifacts": true,
+    "externalBin": ["bin/server"],
+    "active": true,
+    "targets": ["appimage", "dmg", "nsis", "app", "deb", "rpm"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "dialog": false,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUzQTlDRkJGN0NGMTY5QjQKUldTMGFmRjh2OCtwVTZ6ZDB5WjV4cHAxeEN0TlhGQXBEa2ZkL01aMUtrR2dNSWNxKy9ONmR5ZlcK",
+      "endpoints": [
+        "https://github.com/alphajew420/proxy-tester/releases/download/dev-latest/latest.json"
+      ]
+    }
+  }
+}
