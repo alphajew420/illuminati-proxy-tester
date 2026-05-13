@@ -31,9 +31,18 @@
       "entitlements": "./Entitlements.plist"
     },
     "createUpdaterArtifacts": true,
-    "externalBin": ["bin/server"],
+    "externalBin": [
+      "bin/server"
+    ],
     "active": true,
-    "targets": ["appimage", "dmg", "nsis", "app", "deb", "rpm"],
+    "targets": [
+      "appimage",
+      "dmg",
+      "nsis",
+      "app",
+      "deb",
+      "rpm"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -46,7 +55,7 @@
     "updater": {
       "active": true,
       "dialog": false,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUzQTlDRkJGN0NGMTY5QjQKUldTMGFmRjh2OCtwVTZ6ZDB5WjV4cHAxeEN0TlhGQXBEa2ZkL01aMUtrR2dNSWNxKy9ONmR5ZlcK",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENDRjEzNDZERjNFQ0E3Q0UKUldUT3ArenpiVFR4ek5CS0NaemhYc2ttK3dsVFRvOVFCaHZvRUVhR2FaWUtyQzQyVDd0aGlrV1YK",
       "endpoints": [
         "https://github.com/alphajew420/illuminati-proxy-tester/releases/download/dev-latest/latest.json"
       ]
