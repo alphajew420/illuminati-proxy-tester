@@ -6,11 +6,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/alphajew420/proxy-tester.git"
+    "url": "https://github.com/alphajew420/illuminati-proxy-tester.git"
   },
-  "homepage": "https://github.com/alphajew420/proxy-tester",
+  "homepage": "https://github.com/alphajew420/illuminati-proxy-tester",
   "bugs": {
-    "url": "https://github.com/alphajew420/proxy-tester/issues"
+    "url": "https://github.com/alphajew420/illuminati-proxy-tester/issues"
   },
   "scripts": {
     "dev": "next dev --turbopack",

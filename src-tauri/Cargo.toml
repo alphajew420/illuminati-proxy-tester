@@ -4,7 +4,7 @@ version = "1.0.0"
 description = "A modern, open-source desktop application for testing and validating proxy lists with real-time results."
 authors = ["Illuminati Networks"]
 license = "MIT"
-repository = "https://github.com/alphajew420/proxy-tester"
+repository = "https://github.com/alphajew420/illuminati-proxy-tester"
 edition = "2021"
 rust-version = "1.77.2"
 

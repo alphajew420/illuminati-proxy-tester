@@ -32,7 +32,7 @@ if (!version) {
 }
 
 // 2. Define the base URL for downloads
-const githubRepo = "alphajew420/proxy-tester"; // Corrected user/repo
+const githubRepo = "alphajew420/illuminati-proxy-tester"; // Corrected user/repo
 const baseDownloadURL = `https://github.com/${githubRepo}/releases/download/v${version}`;
 
 // 3. Initialize the structure for the final JSON file
