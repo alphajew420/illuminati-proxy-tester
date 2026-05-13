@@ -18,6 +18,99 @@ export type Proxy = {
   simpleData: SimpleDetails | null;
   proDetails: ProDetails | null;
   error: ProxyError | null;
+  // Optional user-supplied tag for the claimed country (e.g. "US"), used by
+  // the geo-correctness check feature.
+  claimedCountry?: string;
+  extras?: ProxyExtras | null;
+  targetResults?: TargetResult[] | null;
+};
+
+export type AnonymityLevel = "elite" | "anonymous" | "transparent" | "unknown";
+
+export type StickinessVerdict = "sticky" | "rotating" | "unknown";
+
+export type TargetVerdict =
+  | "ok"
+  | "blocked"
+  | "captcha"
+  | "fail"
+  | "timeout";
+
+export type TargetResult = {
+  target: string;
+  verdict: TargetVerdict;
+  statusCode?: number;
+  latency?: number;
+  bytes?: number;
+  reason?: string;
+};
+
+export type LatencyDistribution = {
+  samples: number[];
+  p50: number;
+  p95: number;
+  mean: number;
+  jitter: number; // standard deviation, ms
+  unstable: boolean;
+};
+
+export type ProxyExtras = {
+  // Feature 1 — geo correctness
+  geo?: {
+    ip?: string;
+    country?: string;
+    countryCode?: string;
+    city?: string;
+    asn?: string;
+    org?: string;
+    matchesClaim?: boolean | null;
+    claimedCountry?: string;
+  } | null;
+
+  // Feature 2 — latency distribution
+  latency?: LatencyDistribution | null;
+
+  // Feature 3 — protocol auto-detection
+  detectedProtocols?: ProxyProtocol[] | null;
+
+  // Feature 4 — anonymity classification
+  anonymity?: {
+    level: AnonymityLevel;
+    leakedHeaders: string[];
+    clientIpLeaked: boolean;
+  } | null;
+
+  // Feature 5 — DNS leak
+  dnsLeak?: {
+    detected: boolean;
+    resolverIp?: string;
+    proxyIp?: string;
+    reason?: string;
+  } | null;
+
+  // Feature 7 — session stickiness
+  stickiness?: {
+    verdict: StickinessVerdict;
+    samples: string[]; // exit IPs over time
+    unique: number;
+  } | null;
+
+  // Feature 8 — concurrent connection cap
+  concurrency?: {
+    attempted: number;
+    succeeded: number;
+    ceiling: number;
+  } | null;
+
+  // Feature 9 — economics: bytes transferred during all probes for this proxy
+  bytesTransferred?: number;
+
+  // Bonus 2 — rotation tester
+  rotation?: {
+    attempted: number;
+    uniqueExits: number;
+    sampleIps: string[];
+  } | null;
 };
 
 export type ProxyError = {
@@ -49,6 +142,37 @@ export type SimpleModeOptions = {
   latencyCheck: boolean;
 };
 
+export type ExtraTestOptions = {
+  // Feature 1
+  geoCorrectness: boolean;
+  // Feature 2
+  latencyDistribution: boolean;
+  latencySamples: number;
+  // Feature 3
+  protocolAutoDetect: boolean;
+  // Feature 4
+  anonymityClassification: boolean;
+  // Feature 5
+  dnsLeakDetection: boolean;
+  // Feature 6
+  multiTargetEnabled: boolean;
+  multiTargets: string[];
+  // Feature 7
+  stickinessCheck: boolean;
+  stickinessSamples: number;
+  stickinessIntervalMs: number;
+  // Feature 8
+  concurrencyCheck: boolean;
+  concurrencyAttempts: number;
+  // Feature 9
+  costPerGb: number;
+  // Bonus 1
+  captchaDetection: boolean;
+  // Bonus 2
+  rotationCheck: boolean;
+  rotationAttempts: number;
+};
+
 export type ProModeOptions = {
   connectionsPerProxy: number;
   testAllConnections: boolean;
@@ -64,6 +188,7 @@ export type ProxyTesterOptions = {
   activeMode: "simple" | "pro";
   simpleMode: SimpleModeOptions;
   proMode: ProModeOptions;
+  extras?: ExtraTestOptions;
 };
 
 export type ProxyProtocol = "http" | "https" | "socks4" | "socks5" | "unknown";

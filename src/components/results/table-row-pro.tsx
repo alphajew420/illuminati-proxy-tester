@@ -12,9 +12,11 @@ import { cn } from "@/lib/utils";
 import TableRowActions from "./table-row-actions";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { Check, Clipboard } from "lucide-react";
+import ExtrasCells from "./extras-cells";
 
 export default function ResultsTableRowPro({
   proxy,
+  options,
 }: {
   proxy: Proxy;
   options: ProxyTesterOptions;
@@ -511,6 +513,8 @@ export default function ResultsTableRowPro({
             "—"
           )}
         </TableCell>
+
+        <ExtrasCells proxy={proxy} options={options} />
 
         {/* Actions */}
         <TableCell className="text-right">

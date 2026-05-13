@@ -34,7 +34,22 @@ export default function PasteTab({
 
       const newProxies: Proxy[] = rawProxies
         .map((raw) => {
-          const normalizedProxy = normalizeProxy(raw);
+          // Optional "[CC] " or "CC|" prefix sets claimedCountry
+          let claimedCountry: string | undefined;
+          let working = raw;
+          const tagMatch = working.match(/^\s*\[([A-Za-z]{2})\]\s*(.*)$/);
+          if (tagMatch) {
+            claimedCountry = tagMatch[1].toUpperCase();
+            working = tagMatch[2];
+          } else {
+            const pipeMatch = working.match(/^\s*([A-Za-z]{2})\s*\|\s*(.*)$/);
+            if (pipeMatch) {
+              claimedCountry = pipeMatch[1].toUpperCase();
+              working = pipeMatch[2];
+            }
+          }
+
+          const normalizedProxy = normalizeProxy(working);
           if (!normalizedProxy) return null;
 
           const proxy: Proxy = {
@@ -46,6 +61,7 @@ export default function PasteTab({
             proDetails: null,
             error: null,
             status: "unknown" as const,
+            claimedCountry,
           };
 
           return proxy;

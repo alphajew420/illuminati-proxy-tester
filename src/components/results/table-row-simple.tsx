@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import TableRowActions from "./table-row-actions";
 import Flag from "../flag";
+import ExtrasCells from "./extras-cells";
 
 export default function ResultsTableRowSimple({
   proxy,
@@ -198,6 +199,8 @@ export default function ResultsTableRowSimple({
           )}
         </TableCell>
       )}
+
+      <ExtrasCells proxy={proxy} options={options} />
 
       <TableCell className="text-right">
         <TableRowActions proxy={proxy} />

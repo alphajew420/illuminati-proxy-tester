@@ -7,12 +7,14 @@ import { useProxyTesterStore } from "@/store/proxy";
 import { TooltipProvider } from "../ui/tooltip";
 import SimpleModeSettings from "./simple";
 import ProModeSettings from "./pro";
+import ExtrasSettings from "./extras";
 import { Button } from "../ui/button";
 import ModeToggleSwitch from "../mode-toggle-switch";
 
 const TABS = [
   { id: "simple", label: "Simple" },
   { id: "pro", label: "Pro" },
+  { id: "extras", label: "Extras" },
 ];
 
 const slideVariants = {
@@ -35,7 +37,7 @@ const slideVariants = {
 export default function SettingsDropdown() {
   const { options, setMode } = useProxyTesterStore();
   const [showSettings, setShowSettings] = useState(false);
-  const [[activeTabIndex, direction]] = useState([0, 0]);
+  const [[activeTabIndex, direction], setActiveTab] = useState([0, 0]);
   const [contentHeight, setContentHeight] = useState(0);
   const [dropdownHeight, setDropdownHeight] = useState<number | "auto">("auto");
   const settingsRef = useRef<HTMLDivElement>(null);
@@ -76,7 +78,9 @@ export default function SettingsDropdown() {
   }, []);
 
   useEffect(() => {
-    setMode(activeTabId as "simple" | "pro");
+    if (activeTabId === "simple" || activeTabId === "pro") {
+      setMode(activeTabId);
+    }
   }, [activeTabId, setMode]);
 
   return (
@@ -133,7 +137,7 @@ export default function SettingsDropdown() {
                   opacity: { duration: 0.15 },
                   height: { type: "spring", stiffness: 350, damping: 30 },
                 }}
-                className="absolute top-full right-0 z-50 mt-2 w-[420px] overflow-hidden"
+                className="absolute top-full right-0 z-50 mt-2 w-[460px] overflow-hidden"
               >
                 <div className="h-full rounded-2xl bg-[rgba(255,255,255,0.01)] border border-white/20 backdrop-blur-3xl overflow-hidden flex flex-col">
                   {/* Header */}
@@ -162,8 +166,31 @@ export default function SettingsDropdown() {
                     >
                       <TooltipProvider>
                         <div className="flex flex-col gap-6">
-                          {/* Custom Mode Toggle */}
-                          <ModeToggleSwitch enableTooltip={false} />
+                          {/* Tab bar */}
+                          <div className="flex items-center gap-1 p-1 rounded-lg bg-white/5 border border-white/10">
+                            {TABS.map((t, i) => (
+                              <button
+                                key={t.id}
+                                onClick={() =>
+                                  setActiveTab([
+                                    i,
+                                    i > activeTabIndex ? 1 : -1,
+                                  ])
+                                }
+                                className={`flex-1 text-xs font-medium py-1.5 rounded-md transition-colors ${
+                                  activeTabIndex === i
+                                    ? "bg-white/15 text-white"
+                                    : "text-text-secondary hover:text-white"
+                                }`}
+                              >
+                                {t.label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {activeTabId !== "extras" && (
+                            <ModeToggleSwitch enableTooltip={false} />
+                          )}
 
                           {/* Animated Settings Content */}
                           <div className="overflow-hidden mt-4">
@@ -173,7 +200,7 @@ export default function SettingsDropdown() {
                               mode="wait"
                             >
                               <motion.div
-                                key={options.activeMode}
+                                key={activeTabId}
                                 custom={direction}
                                 variants={slideVariants}
                                 initial="enter"
@@ -188,12 +215,18 @@ export default function SettingsDropdown() {
                                   opacity: { duration: 0.15 },
                                 }}
                               >
-                                {options.activeMode === "simple" ? (
+                                {activeTabId === "simple" && (
                                   <SimpleModeSettings
                                     setHeight={setContentHeight}
                                   />
-                                ) : (
+                                )}
+                                {activeTabId === "pro" && (
                                   <ProModeSettings
+                                    setHeight={setContentHeight}
+                                  />
+                                )}
+                                {activeTabId === "extras" && (
+                                  <ExtrasSettings
                                     setHeight={setContentHeight}
                                   />
                                 )}

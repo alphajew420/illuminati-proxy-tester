@@ -8,6 +8,7 @@ import {
   getProModeStats,
   cleanupProMode,
 } from "./core/pro-proxy-test";
+import { runExtras } from "./core/extras";
 
 const app = express();
 const port = 3001;
@@ -71,6 +72,35 @@ app.post("/proxy-check", async (req: Request, res: Response) => {
             result = await testProMode(proxy, options);
           } else {
             result = await testSimpleMode(proxy, options);
+          }
+
+          // Run feature extras if enabled and the base test succeeded
+          if (
+            result.status === "ok" &&
+            options.extras &&
+            !isClientDisconnected
+          ) {
+            try {
+              const wp = (result.protocol && result.protocol !== "unknown"
+                ? result.protocol
+                : "http") as any;
+              const ex = await runExtras(
+                result,
+                wp,
+                options.targetUrl,
+                options.extras
+              );
+              result = {
+                ...result,
+                extras: ex.extras,
+                targetResults: ex.targets ?? null,
+              };
+            } catch (err) {
+              console.warn(
+                `Extras failed for ${proxy.formatted}:`,
+                (err as Error).message
+              );
+            }
           }
 
           // Stream result immediately
@@ -162,6 +192,43 @@ app.get("/stats", (req: Request, res: Response) => {
       timestamp: new Date().toISOString(),
     });
   }
+});
+
+// --- Probe endpoints used by the extras module ---------------------------
+// These run on the same Node sidecar; the proxy under test makes a request to
+// them so we can inspect headers / requester IP.
+const stripIp = (raw: string | undefined): string => {
+  if (!raw) return "";
+  const first = raw.split(",")[0].trim();
+  return first.replace(/^::ffff:/, "");
+};
+
+app.get("/__anon-probe", (req: Request, res: Response) => {
+  const headers = req.headers as Record<string, string | string[] | undefined>;
+  const flat: Record<string, string> = {};
+  for (const [k, v] of Object.entries(headers)) {
+    if (v === undefined) continue;
+    flat[k.toLowerCase()] = Array.isArray(v) ? v.join(", ") : v;
+  }
+  res.json({
+    headers: flat,
+    requesterIp: stripIp(
+      (headers["x-forwarded-for"] as string) || req.socket.remoteAddress || ""
+    ),
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/__dns-probe/:token", (req: Request, res: Response) => {
+  res.json({
+    token: req.params.token,
+    requesterIp: stripIp(
+      (req.headers["x-forwarded-for"] as string) ||
+        req.socket.remoteAddress ||
+        ""
+    ),
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // Health check endpoint

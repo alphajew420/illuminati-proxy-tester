@@ -10,6 +10,7 @@ import { HelpCircle } from "lucide-react";
 
 export default function ResultsTableHead() {
   const { options } = useProxyTesterStore();
+  const extras = options.extras;
 
   return (
     <TableRow>
@@ -190,6 +191,47 @@ export default function ResultsTableHead() {
               note: "Critical for geo-restricted content, privacy validation, and ensuring your real IP is properly hidden.",
             }}
           />
+        </TableHead>
+      )}
+
+      {extras?.geoCorrectness && (
+        <TableHead className="text-left text-sm px-2 min-w-[140px]">
+          Geo
+        </TableHead>
+      )}
+      {extras?.latencyDistribution && (
+        <TableHead className="text-left text-sm px-2 min-w-[110px]">
+          p50 / p95
+        </TableHead>
+      )}
+      {extras?.protocolAutoDetect && (
+        <TableHead className="text-left text-sm px-2 min-w-[110px]">
+          Detected
+        </TableHead>
+      )}
+      {extras?.anonymityClassification && (
+        <TableHead className="text-left text-sm px-2 min-w-[110px]">
+          Anonymity
+        </TableHead>
+      )}
+      {extras?.dnsLeakDetection && (
+        <TableHead className="text-left text-sm px-2 min-w-[100px]">
+          DNS
+        </TableHead>
+      )}
+      {extras?.stickinessCheck && (
+        <TableHead className="text-left text-sm px-2 min-w-[110px]">
+          Sticky?
+        </TableHead>
+      )}
+      {extras?.concurrencyCheck && (
+        <TableHead className="text-left text-sm px-2 min-w-[100px]">
+          Conc cap
+        </TableHead>
+      )}
+      {extras?.rotationCheck && (
+        <TableHead className="text-left text-sm px-2 min-w-[110px]">
+          Unique exits
         </TableHead>
       )}
 
